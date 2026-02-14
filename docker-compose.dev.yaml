@@ -12,3 +12,25 @@ services:
       - /frontend/node_modules
     stdin_open: true
     tty: true
+
+  laravel:
+    container_name: laravel
+    build:
+      context: .
+      dockerfile: ./Docker/Dockerfile-laravel
+    volumes:
+      - ./laravel:/var/www
+    working_dir: /var/www
+    command: php-fpm
+
+
+  nginx:
+    container_name: nginx
+    image: nginx:alpine
+    ports:
+      - "8000:80"
+    volumes:
+      - ./laravel:/var/www
+      - ./Docker/nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - laravel
