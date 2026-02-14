@@ -1,0 +1,14 @@
+services:
+  frontend_react_app:
+    container_name: frontend_react_app_prod
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: prod
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`react.betocode.dev`)"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
+      - "traefik.http.services.frontend.loadbalancer.server.port=80"

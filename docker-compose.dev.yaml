@@ -1,0 +1,14 @@
+services:
+  frontend:
+    container_name: frontend
+    build:
+      context: .
+      dockerfile: ./Docker/Dockerfile
+      target: dev
+    ports:
+      - 5173:5173
+    volumes:
+      - ./frontend:/frontend
+      - /frontend/node_modules
+    stdin_open: true
+    tty: true
