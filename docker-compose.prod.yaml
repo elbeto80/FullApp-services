@@ -3,7 +3,7 @@ services:
     container_name: frontend
     build:
       context: .
-      dockerfile: ./Docker/Dockerfile
+      dockerfile: Dockerfile
       target: prod
     restart: always
     labels:
