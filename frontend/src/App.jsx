@@ -1,35 +1,68 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import axios from "axios";
+
+const API_URL = "https://jsonplaceholder.typicode.com/posts?_limit=5";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const fetchPosts = async () => {
+    setLoading(true);
+    setError(null);
+    setData(null);
+    try {
+      const response = await axios.get(API_URL);
+      setData(response.data);
+    } catch (err) {
+      setError(err.message || "Error al cargar los datos");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
+    <div style={{ padding: "2rem", maxWidth: 600, margin: "0 auto" }}>
+      <h1>Prueba de API externa</h1>
+      <p style={{ color: "#666", marginBottom: "1rem" }}>
+        JSONPlaceholder – posts de ejemplo (sin API key).
       </p>
-    </>
-  )
+      <button
+        onClick={fetchPosts}
+        disabled={loading}
+        style={{
+          padding: "0.5rem 1rem",
+          fontSize: "1rem",
+          cursor: loading ? "not-allowed" : "pointer",
+          backgroundColor: "#0d6efd",
+          color: "white",
+          border: "none",
+          borderRadius: 6,
+        }}
+      >
+        {loading ? "Cargando…" : "Cargar posts"}
+      </button>
+
+      {error && (
+        <p style={{ color: "#c00", marginTop: "1rem" }}>Error: {error}</p>
+      )}
+
+      {data && (
+        <ul style={{ marginTop: "1.5rem", paddingLeft: "1.25rem" }}>
+          {data.map((post) => (
+            <li key={post.id} style={{ marginBottom: "0.75rem" }}>
+              <strong>{post.title}</strong>
+              <br />
+              <span style={{ color: "#555", fontSize: "0.9rem" }}>
+                {post.body}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
 }
 
-export default App
+export default App;
