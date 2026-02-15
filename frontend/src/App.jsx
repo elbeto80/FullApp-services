@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 
-const API_URL = "https://jsonplaceholder.typicode.com/posts?_limit=5";
+const API_URL = "http://localhost:8000/post";
 
 function App() {
   const [data, setData] = useState(null);
