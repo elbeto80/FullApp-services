@@ -12,3 +12,26 @@ services:
       - "traefik.http.routers.frontend.entrypoints=websecure"
       - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
       - "traefik.http.services.frontend.loadbalancer.server.port=80"
+
+  laravel:
+    container_name: laravel
+    build:
+      context: .
+      dockerfile: docker/laravel/Dockerfile
+      target: prod
+    restart: always
+
+  nginx:
+    container_name: laravel-nginx
+    image: nginx:alpine
+    restart: always
+    depends_on:
+      - laravel
+    volumes:
+      - ./docker/nginx/laravel.conf:/etc/nginx/conf.d/default.conf
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.laravel.rule=Host(`laravel.betocode.dev`)"
+      - "traefik.http.routers.laravel.entrypoints=websecure"
+      - "traefik.http.routers.laravel.tls.certresolver=letsencrypt"
+      - "traefik.http.services.laravel.loadbalancer.server.port=80"
