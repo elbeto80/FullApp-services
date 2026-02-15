@@ -1,7 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
 
-const API_URL = "http://localhost:8000/post";
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
 function App() {
   const [data, setData] = useState(null);
@@ -13,7 +14,7 @@ function App() {
     setError(null);
     setData(null);
     try {
-      const response = await axios.get(API_URL);
+      const response = await axios.get(`${API_BASE_URL}/post`);
       setData(response.data);
     } catch (err) {
       setError(err.message || "Error al cargar los datos");
