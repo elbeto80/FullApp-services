@@ -4,5 +4,3 @@ services:
     build:
       context: .
       dockerfile: docker/frontend.prod.Dockerfile
-    ports:
-      - "80:80"
