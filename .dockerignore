@@ -1,0 +1,14 @@
+# Dependencias (se instalan durante el build)
+laravel/vendor
+laravel/node_modules
+
+# Cache y storage local (se crean en el entrypoint)
+laravel/storage/logs/*
+laravel/storage/framework/cache/*
+laravel/storage/framework/sessions/*
+laravel/storage/framework/views/*
+laravel/bootstrap/cache/*
+
+# Git
+.git
+.gitignore

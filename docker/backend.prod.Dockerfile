@@ -25,25 +25,32 @@ RUN docker-php-ext-install \
 # Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copiar TODO Laravel
-COPY laravel/ .
+# Copiar Laravel a directorio de staging (NO al WORKDIR del volume)
+# El entrypoint copiará el código fresco al volumen en cada inicio,
+# evitando el problema de "named volumes" que no se actualizan en rebuild
+COPY laravel/ /app-staging/
 
-# Instalar dependencias (prod)
+# Instalar dependencias (prod) en staging
+WORKDIR /app-staging
 RUN composer install \
   --no-dev \
   --prefer-dist \
   --optimize-autoloader \
   --no-interaction
 
-# 🔥 SOLO limpiar caches (NO cachear)
-RUN php artisan config:clear \
-  && php artisan route:clear \
-  && php artisan view:clear
-
-# Permisos (crítico para web)
+# Crear directorios de storage y permisos en staging
 RUN mkdir -p storage/framework/{sessions,views,cache} \
-  && chown -R www-data:www-data storage bootstrap/cache
+  && mkdir -p storage/logs \
+  && chown -R www-data:www-data storage bootstrap/cache \
+  && chmod -R 775 storage bootstrap/cache
+
+WORKDIR /var/www/html
+
+# Copiar entrypoint
+COPY docker/entrypoint.prod.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 EXPOSE 9000
 
+ENTRYPOINT ["/entrypoint.sh"]
 CMD ["php-fpm"]
