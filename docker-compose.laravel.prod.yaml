@@ -7,6 +7,7 @@ services:
     volumes:
       - laravel_code:/var/www/html
       - ./docker/php/prod.ini:/usr/local/etc/php/conf.d/prod.ini
+      - ./docker/php/zz-env.conf:/usr/local/etc/php-fpm.d/zz-env.conf
     expose:
       - "9000"
 
