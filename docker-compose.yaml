@@ -22,6 +22,7 @@ services:
     volumes:
       - ./laravel:/var/www/html
       - backend_vendor:/var/www/html/vendor
+      - ./docker/php/conf.d/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
     depends_on:
       - database
     stdin_open: true
