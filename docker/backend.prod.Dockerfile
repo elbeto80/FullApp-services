@@ -25,29 +25,24 @@ RUN docker-php-ext-install \
 # Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# ✅ Copiar TODO Laravel primero (incluye artisan)
+# Copiar TODO Laravel
 COPY laravel/ .
 
-# ✅ Ahora sí composer puede ejecutar artisan
+# Instalar dependencias (prod)
 RUN composer install \
   --no-dev \
   --prefer-dist \
   --optimize-autoloader \
   --no-interaction
 
-# Optimizar Laravel (prod)
-RUN php artisan key:generate --force || true \
-  && php artisan config:clear \
+# 🔥 SOLO limpiar caches (NO cachear)
+RUN php artisan config:clear \
   && php artisan route:clear \
-  && php artisan view:clear \
-  && php artisan config:cache \
-  && php artisan route:cache \
-  && php artisan view:cache
+  && php artisan view:clear
 
-# Permisos
-RUN chown -R www-data:www-data \
-  storage \
-  bootstrap/cache
+# Permisos (crítico para web)
+RUN mkdir -p storage/framework/{sessions,views,cache} \
+  && chown -R www-data:www-data storage bootstrap/cache
 
 EXPOSE 9000
 
