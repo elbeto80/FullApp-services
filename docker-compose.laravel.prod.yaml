@@ -1,4 +1,17 @@
 services:
+  database:
+    container_name: mysql
+    image: mysql:8.0.45
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: x
+      MYSQL_DATABASE: laravel
+      MYSQL_USER: beto
+      MYSQL_PASSWORD: x
+    volumes:
+      - mysql_data:/var/lib/mysql
+
   backend:
     container_name: backend
     build:
@@ -10,6 +23,8 @@ services:
       - ./docker/php/zz-env.conf:/usr/local/etc/php-fpm.d/zz-env.conf
     expose:
       - "9000"
+    depends_on:
+      - database
 
   nginx:
     container_name: nginx
@@ -24,3 +39,4 @@ services:
 
 volumes:
   laravel_code:
+  mysql_data:
