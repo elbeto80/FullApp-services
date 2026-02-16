@@ -4,12 +4,6 @@ services:
     build:
       context: .
       dockerfile: docker/backend.prod.Dockerfile
-      args:
-        APP_NAME: Laravel
-        APP_ENV: production
-        APP_KEY: base64:mWzxDGFDYH/IwMWJys/lrXzCfI5akBXD0tCnbQ6UX3I=
-        APP_DEBUG: true
-        APP_URL: https://laravel.betocode.dev
     volumes:
       - laravel_code:/var/www/html
       - ./docker/php/prod.ini:/usr/local/etc/php/conf.d/prod.ini
