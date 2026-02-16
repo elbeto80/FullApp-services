@@ -25,18 +25,17 @@ RUN docker-php-ext-install \
 # Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copiar composer primero (cache)
-COPY laravel/composer.json laravel/composer.lock* ./
+# ✅ Copiar TODO Laravel primero (incluye artisan)
+COPY laravel/ .
+
+# ✅ Ahora sí composer puede ejecutar artisan
 RUN composer install \
   --no-dev \
   --prefer-dist \
   --optimize-autoloader \
   --no-interaction
 
-# Copiar el resto del proyecto
-COPY laravel/ .
-
-# Optimizar Laravel
+# Optimizar Laravel (prod)
 RUN php artisan key:generate --force || true \
   && php artisan config:clear \
   && php artisan route:clear \
