@@ -20,15 +20,6 @@ RUN docker-php-ext-install \
   exif \
   pcntl \
   bcmath \
-  mysqli \
-  zip \
-  intl \
-  opcache \
-  soap \
-  xml \
-  xmlwriter \
-  xmlreader \
-  xsl \
   gd
 
 # Composer
