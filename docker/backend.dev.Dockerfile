@@ -14,15 +14,17 @@ RUN apk add --no-cache \
   linux-headers \
   $PHPIZE_DEPS
 
-# Extensiones PHP
+# Extensiones PHP (xml, mbstring, opcache + resto)
 RUN docker-php-ext-install \
   pdo \
   pdo_mysql \
   mbstring \
+  xml \
   exif \
   pcntl \
   bcmath \
-  gd
+  gd \
+  opcache
 
 # Xdebug
 RUN pecl install xdebug \
