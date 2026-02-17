@@ -38,9 +38,7 @@ services:
       LOG_CHANNEL: stderr # 📊 Logs compatibles con Docker/Dokploy
     restart: unless-stopped
     depends_on:
-      database:
-        # ⏳ Laravel solo arranca cuando MySQL está listo
-        condition: service_healthy
+      - database
     networks:
       - app_net
 
