@@ -10,6 +10,12 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     restart: unless-stopped
+    healthcheck:
+      # 🩺 Healthcheck para evitar race conditions con Laravel
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - app_net
 
@@ -38,7 +44,15 @@ services:
       LOG_CHANNEL: stderr # 📊 Logs compatibles con Docker/Dokploy
     restart: unless-stopped
     depends_on:
-      - database
+      database:
+        # ⏳ Laravel solo arranca cuando MySQL está listo
+        condition: service_healthy
+    healthcheck:
+      # 🩺 Healthcheck simple del backend
+      test: ["CMD", "php", "-v"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
     networks:
       - app_net
 
