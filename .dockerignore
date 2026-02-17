@@ -1,0 +1,19 @@
+.git
+.gitignore
+*.md
+
+# Dev files
+docker-compose.yaml
+docker/backend.dev.Dockerfile
+docker/frontend.dev.Dockerfile
+docker/php/conf.d/xdebug.ini
+
+# Node
+frontend/node_modules
+frontend/dist
+
+# Laravel
+laravel/vendor
+laravel/node_modules
+laravel/storage/logs/*
+laravel/.env

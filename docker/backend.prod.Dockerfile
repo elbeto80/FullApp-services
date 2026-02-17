@@ -1,49 +1,59 @@
-FROM php:8.4-fpm-alpine
+# ── Stage 1: Composer dependencies ──
+FROM composer:latest AS deps
+
+WORKDIR /app
+
+COPY laravel/composer.json laravel/composer.lock ./
+RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist
+
+COPY laravel/ .
+RUN composer dump-autoload --optimize
+
+
+# ── Stage 2: PHP-FPM (backend) ──
+FROM php:8.4-fpm-alpine AS backend
 
 WORKDIR /var/www/html
 
-# Dependencias del sistema
 RUN apk add --no-cache \
-  git \
-  curl \
-  libpng-dev \
-  oniguruma-dev \
-  libxml2-dev \
-  zip \
-  unzip
+    libpng-dev \
+    oniguruma-dev \
+    libxml2-dev
 
-# Extensiones PHP
 RUN docker-php-ext-install \
-  pdo \
-  pdo_mysql \
-  mbstring \
-  exif \
-  pcntl \
-  bcmath \
-  gd
+    pdo \
+    pdo_mysql \
+    mbstring \
+    xml \
+    exif \
+    pcntl \
+    bcmath \
+    gd \
+    opcache
 
-# Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+COPY docker/php/prod.ini /usr/local/etc/php/conf.d/prod.ini
 
-# Copiar TODO Laravel
-COPY laravel/ .
+COPY --from=deps /app /var/www/html
 
-# Instalar dependencias (prod)
-RUN composer install \
-  --no-dev \
-  --prefer-dist \
-  --optimize-autoloader \
-  --no-interaction
-
-# 🔥 SOLO limpiar caches (NO cachear)
-RUN php artisan config:clear \
-  && php artisan route:clear \
-  && php artisan view:clear
-
-# Permisos (crítico para web)
-RUN mkdir -p storage/framework/{sessions,views,cache} \
-  && chown -R www-data:www-data storage bootstrap/cache
+RUN mkdir -p storage/logs \
+    storage/framework/cache/data \
+    storage/framework/sessions \
+    storage/framework/views \
+    bootstrap/cache \
+    && chown -R www-data:www-data storage bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
 
 EXPOSE 9000
 
 CMD ["php-fpm"]
+
+
+# ── Stage 3: Nginx (reverse proxy → PHP-FPM) ──
+FROM nginx:alpine AS nginx-backend
+
+COPY docker/nginx/backend.conf /etc/nginx/conf.d/default.conf
+COPY --from=deps /app/public /var/www/html/public
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

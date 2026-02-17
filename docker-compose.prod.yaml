@@ -1,6 +1,48 @@
 services:
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend.prod.Dockerfile
+      target: backend
+    volumes:
+      - backend_storage:/var/www/html/storage
+    environment:
+      APP_NAME: ${APP_NAME:-Laravel}
+      APP_ENV: production
+      APP_KEY: ${APP_KEY}
+      APP_DEBUG: "false"
+      APP_URL: https://laravel.betocode.dev
+      DB_CONNECTION: ${DB_CONNECTION:-mysql}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT:-3306}
+      DB_DATABASE: ${DB_DATABASE:-laravel}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      LOG_CHANNEL: stderr
+      SESSION_DRIVER: ${SESSION_DRIVER:-file}
+      CACHE_STORE: ${CACHE_STORE:-file}
+      QUEUE_CONNECTION: ${QUEUE_CONNECTION:-sync}
+    restart: unless-stopped
+
+  nginx-backend:
+    build:
+      context: .
+      dockerfile: docker/backend.prod.Dockerfile
+      target: nginx-backend
+    ports:
+      - "8000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
   frontend:
-    container_name: frontend
     build:
       context: .
       dockerfile: docker/frontend.prod.Dockerfile
+      target: prod
+    ports:
+      - "3000:80"
+    restart: unless-stopped
+
+volumes:
+  backend_storage:
