@@ -1,5 +1,5 @@
 # ── Stage 1: Build de React con Vite (used by prod stage) ──
-FROM node:22.22.0-alpine3.23 AS build
+FROM node:22-alpine3.23 AS build
 
 WORKDIR /app
 
@@ -11,7 +11,7 @@ RUN npm run build
 
 
 # ── Stage 2: Development ──
-FROM node:22.22.0-alpine3.23 AS dev
+FROM node:22-alpine3.23 AS dev
 
 WORKDIR /frontend
 
@@ -21,7 +21,7 @@ CMD ["sh", "-c", "npm install && npm run dev"]
 
 
 # ── Stage 3: Production (Nginx sirve los archivos estáticos) ──
-FROM nginx:alpine AS prod
+FROM nginx:1.28-alpine3.23 AS prod
 
 COPY docker/nginx/frontend.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/dist /usr/share/nginx/html

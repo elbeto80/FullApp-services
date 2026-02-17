@@ -1,16 +1,23 @@
 services:
   database:
     image: mysql:8.0.45
-    ports:
-      - "3306:3306"
+    # 🚫 NO exponemos el puerto 3306 en producción, MySQL solo debe ser accesible desde la red Docker
     environment:
-      MYSQL_ROOT_PASSWORD: x
-      MYSQL_DATABASE: laravel
-      MYSQL_USER: beto
-      MYSQL_PASSWORD: x
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD} # 🔐 Secret gestionado por Dokploy
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
     volumes:
       - mysql_data:/var/lib/mysql
     restart: unless-stopped
+    healthcheck:
+      # 🩺 Healthcheck para evitar race conditions con Laravel
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app_net
 
   backend:
     build:
@@ -18,26 +25,36 @@ services:
       dockerfile: docker/backend.Dockerfile
       target: backend
     volumes:
+      # 📦 Persistencia solo de storage (logs, cache, uploads)
       - backend_storage:/var/www/html/storage
     environment:
       APP_NAME: ${APP_NAME:-Laravel}
-      APP_ENV: production
-      APP_KEY: ${APP_KEY}
-      APP_DEBUG: "false"
-      APP_URL: https://laravel.betocode.dev
+      APP_ENV: ${APP_ENV:-production}
+      APP_DEBUG: ${APP_DEBUG:-false}
+      APP_KEY: ${APP_KEY} # 🔐 Nunca hardcodeado
+      APP_URL: ${APP_URL:-https://laravel.betocode.dev}
+
       DB_CONNECTION: ${DB_CONNECTION:-mysql}
-      DB_HOST: ${DB_HOST}
+      DB_HOST: ${DB_HOST:-database} # 🔗 Nombre del servicio Docker
       DB_PORT: ${DB_PORT:-3306}
       DB_DATABASE: ${DB_DATABASE:-laravel}
-      DB_USERNAME: ${DB_USERNAME}
+      DB_USERNAME: ${DB_USERNAME:-beto}
       DB_PASSWORD: ${DB_PASSWORD}
-      LOG_CHANNEL: stderr
-      SESSION_DRIVER: ${SESSION_DRIVER:-file}
-      CACHE_STORE: ${CACHE_STORE:-file}
-      QUEUE_CONNECTION: ${QUEUE_CONNECTION:-sync}
+
+      LOG_CHANNEL: stderr # 📊 Logs compatibles con Docker/Dokploy
     restart: unless-stopped
     depends_on:
-      - database
+      database:
+        # ⏳ Laravel solo arranca cuando MySQL está listo
+        condition: service_healthy
+    healthcheck:
+      # 🩺 Healthcheck simple del backend
+      test: ["CMD", "php", "-v"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - app_net
 
   nginx-backend:
     build:
@@ -47,6 +64,8 @@ services:
     depends_on:
       - backend
     restart: unless-stopped
+    networks:
+      - app_net
 
   frontend:
     build:
@@ -54,7 +73,13 @@ services:
       dockerfile: docker/frontend.Dockerfile
       target: prod
     restart: unless-stopped
+    networks:
+      - app_net
 
 volumes:
   backend_storage:
   mysql_data:
+
+networks:
+  app_net:
+    driver: bridge
