@@ -1,10 +1,21 @@
 #!/bin/sh
 set -e
 
-# Cache config at runtime when environment variables are available
+######################################################
+#❗ Las migraciones NO se revierten automáticamente  #
+######################################################
+
+echo "⏳ Waiting for database..."
+until php artisan migrate:status > /dev/null 2>&1; do
+  sleep 2
+done
+
+echo "🗄️ Running migrations..."
+php artisan migrate --force
+
+echo "⚡ Caching config..."
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
-# Execute the main container command (php-fpm)
 exec "$@"
