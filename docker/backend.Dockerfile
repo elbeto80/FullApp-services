@@ -96,16 +96,18 @@ RUN mkdir -p \
   && chown -R www-data:www-data storage bootstrap/cache \
   && chmod -R 775 storage bootstrap/cache
 
-# 🚀 Optimización Laravel (cache real de producción)
+# 🧹 Limpiar cualquier cache previo (build sin env vars)
 RUN php artisan config:clear \
   && php artisan route:clear \
-  && php artisan view:clear \
-  && php artisan config:cache \
-  && php artisan route:cache \
-  && php artisan view:cache
+  && php artisan view:clear
+
+# 🚀 Entrypoint que cachea config en runtime (cuando las env vars están disponibles)
+COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
 EXPOSE 9000
 
+ENTRYPOINT ["entrypoint.sh"]
 CMD ["php-fpm"]
 
 
