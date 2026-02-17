@@ -41,12 +41,6 @@ services:
       database:
         # ⏳ Laravel solo arranca cuando MySQL está listo
         condition: service_healthy
-    healthcheck:
-      # 🩺 Healthcheck simple del backend
-      test: ["CMD", "php", "-v"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
     networks:
       - app_net
 
