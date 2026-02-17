@@ -30,7 +30,7 @@ services:
       dockerfile: docker/backend.prod.Dockerfile
       target: nginx-backend
     ports:
-      - "8000:80"
+      - "8081:80"
     depends_on:
       - backend
     restart: unless-stopped
@@ -41,7 +41,7 @@ services:
       dockerfile: docker/frontend.prod.Dockerfile
       target: prod
     ports:
-      - "3000:80"
+      - "3081:80"
     restart: unless-stopped
 
 volumes:
