@@ -16,7 +16,7 @@ services:
     container_name: backend
     build:
       context: .
-      dockerfile: docker/backend.dev.Dockerfile
+      dockerfile: docker/backend.Dockerfile
       target: dev
     ports:
       - "8000:8000"
@@ -33,7 +33,7 @@ services:
     container_name: frontend
     build:
       context: .
-      dockerfile: docker/frontend.dev.Dockerfile
+      dockerfile: docker/frontend.Dockerfile
       target: dev
     ports:
       - "5173:5173"
