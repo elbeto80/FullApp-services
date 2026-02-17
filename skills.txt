@@ -1,0 +1,21 @@
+npx skills add https://github.com/dammyjay93/interface-design --skill interface-design
+npx skills add https://github.com/vercel-labs/agent-skills --skill vercel-react-best-practices
+
+
+# Se activa antes de escribir código. Refina ideas preliminares mediante preguntas, explora alternativas, presenta el diseño en secciones para su validación. Guarda el documento de diseño.
+npx skills add https://github.com/obra/superpowers --skill brainstorming
+
+#  proceso debugging en 4 fases (incluye rastreo de causa raíz, defensa en profundidad y técnicas de espera basadas en condiciones)
+npx skills add https://github.com/obra/superpowers --skill systematic-debugging
+
+
+npx skills add https://github.com/composiohq/awesome-claude-skills --skill changelog-generator
+
+
+npx skills add https://github.com/wshobson/agents --skill api-design-principles
+
+
+npx skills add https://github.com/wshobson/agents --skill error-handling-patterns
+
+
+npx skills add https://github.com/wshobson/agents --skill postgresql-table-design
