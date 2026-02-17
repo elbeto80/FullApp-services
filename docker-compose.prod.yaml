@@ -34,7 +34,7 @@ services:
       APP_KEY: ${APP_KEY} # 🔐 Nunca hardcodeado
       APP_URL: ${APP_URL}
 
-      DB_CONNECTION: ${DB_CONNECTION}
+      DB_CONNECTION: mysql
       DB_HOST: ${DB_HOST} # 🔗 Nombre del servicio Docker
       DB_PORT: ${DB_PORT}
       DB_DATABASE: ${DB_DATABASE}
