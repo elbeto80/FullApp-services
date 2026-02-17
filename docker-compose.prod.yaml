@@ -1,4 +1,18 @@
 services:
+  database:
+    container_name: mysql
+    image: mysql:8.0.45
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: x
+      MYSQL_DATABASE: laravel
+      MYSQL_USER: beto
+      MYSQL_PASSWORD: x
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: unless-stopped
+
   backend:
     build:
       context: .
@@ -23,6 +37,8 @@ services:
       CACHE_STORE: ${CACHE_STORE:-file}
       QUEUE_CONNECTION: ${QUEUE_CONNECTION:-sync}
     restart: unless-stopped
+    depends_on:
+      - database
 
   nginx-backend:
     build:
@@ -46,3 +62,4 @@ services:
 
 volumes:
   backend_storage:
+  mysql_data:
