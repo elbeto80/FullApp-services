@@ -10,6 +10,7 @@ RUN apk add --no-cache \
   libpng-dev \
   oniguruma-dev \
   libxml2-dev \
+  postgresql-dev \
   zip \
   unzip \
   linux-headers \
@@ -19,6 +20,7 @@ RUN apk add --no-cache \
 RUN docker-php-ext-install \
   pdo \
   pdo_mysql \
+  pdo_pgsql \
   mbstring \
   xml \
   exif \
@@ -66,11 +68,13 @@ WORKDIR /var/www/html
 RUN apk add --no-cache \
   libpng-dev \
   oniguruma-dev \
-  libxml2-dev
+  libxml2-dev \
+  postgresql-dev
 
 # 🐘 Extensiones necesarias para Laravel
 RUN docker-php-ext-install \
   pdo \
+  pdo_pgsql \
   pdo_mysql \
   mbstring \
   xml \
