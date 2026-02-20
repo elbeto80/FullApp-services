@@ -1,22 +1,28 @@
 import { useState } from "react";
 import axios from "axios";
 
+interface Post {
+  id: number;
+  title: string;
+  body: string;
+}
+
 function App() {
-  const [data, setData] = useState(null);
+  const [data, setData] = useState<Post[] | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchPosts = async () => {
     setLoading(true);
     setError(null);
     setData(null);
     try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_BASE_URL}/posts`,
-      );
+      const response = await axios.get(`${VITE_API_BASE_URL}/posts`);
       setData(response.data);
     } catch (err) {
-      setError(err.message || "Error al cargar los datos");
+      setError(
+        err instanceof Error ? err.message : "Error al cargar los datos",
+      );
     } finally {
       setLoading(false);
     }
