@@ -50,7 +50,7 @@ function App() {
 
       {data && (
         <ul style={{ marginTop: "1.5rem", paddingLeft: "1.25rem" }}>
-          {data.map((post) => (
+          {data.map(post => (
             <li key={post.id} style={{ marginBottom: "0.75rem" }}>
               <strong>{post.title}</strong>
               <br />
