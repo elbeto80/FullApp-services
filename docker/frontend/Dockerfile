@@ -6,10 +6,10 @@ ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 
 WORKDIR /app
 
-COPY frontend/package.json frontend/package-lock.json ./
+COPY ./frontend/package.json ./frontend/package-lock.json ./
 RUN npm ci
 
-COPY frontend/ .
+COPY ./frontend/ .
 RUN npm run build
 
 
