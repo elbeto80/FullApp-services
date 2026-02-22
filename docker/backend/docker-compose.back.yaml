@@ -24,11 +24,12 @@ services:
       LOG_CHANNEL: stderr # 📊 Logs compatibles con Docker/Dokploy
     restart: unless-stopped
     healthcheck:
-      # 🩺 Healthcheck simple del backend
-      test: ["CMD", "php", "-v"]
-      interval: 30s
+      # 🩺 Verifica que PHP-FPM esté escuchando en el puerto 9000
+      test: ["CMD-SHELL", "nc -z localhost 9000 || exit 1"]
+      interval: 10s
       timeout: 5s
-      retries: 3
+      retries: 5
+      start_period: 60s
     networks:
       - app_net
 
@@ -38,15 +39,20 @@ services:
       dockerfile: docker/backend/Dockerfile
       target: nginx-backend
     restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
     volumes:
       - backend_storage:/var/www/html/storage
     networks:
       - app_net
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost"]
+      # 🩺 Endpoint estático, no depende de PHP-FPM
+      test: ["CMD-SHELL", "wget -qO- http://localhost/ping || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 3
+      start_period: 10s
 
 networks:
   app_net:
