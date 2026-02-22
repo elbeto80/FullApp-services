@@ -1,0 +1,23 @@
+services:
+  database:
+    image: mysql:8.0.45
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD} # 🔐 Secret gestionado por Dokploy
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: unless-stopped
+    healthcheck:
+      # 🩺 Healthcheck para evitar race conditions con Laravel
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app_net
+
+networks:
+  app_net:
+    external: true
