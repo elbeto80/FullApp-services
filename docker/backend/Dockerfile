@@ -116,9 +116,9 @@ CMD ["php-fpm"]
 
 
 # ── Stage 3: Nginx Backend ──
-FROM nginx:1.28-alpine3.23 AS nginx-backend
+FROM nginx:stable-alpine AS nginx-backend
 
-COPY docker/nginx/backend.conf /etc/nginx/conf.d/default.conf
+COPY docker/backend/nginx/backend.conf /etc/nginx/conf.d/default.conf
 # 📂 Solo archivos públicos
 COPY --from=deps /app/public /var/www/html/public
 
