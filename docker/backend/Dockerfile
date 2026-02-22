@@ -85,7 +85,7 @@ RUN docker-php-ext-install \
   opcache
 
 # ⚙️ Configuración PHP producción
-COPY docker/php/prod.ini /usr/local/etc/php/conf.d/prod.ini
+COPY docker/backend/php/prod.ini /usr/local/etc/php/conf.d/prod.ini
 
 # 📥 Código ya optimizado desde Composer
 COPY --from=deps /app /var/www/html
