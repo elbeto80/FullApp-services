@@ -38,8 +38,8 @@ services:
       dockerfile: docker/backend/Dockerfile
       target: nginx-backend
     restart: unless-stopped
-    volumes:
-      - backend_storage:/var/www/html/storage
+    ports:
+    - "8080:80"
     networks:
       - app_net
     healthcheck:
