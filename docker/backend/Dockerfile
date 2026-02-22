@@ -120,8 +120,9 @@ CMD ["php-fpm"]
 FROM nginx:stable-alpine AS nginx-backend
 
 COPY docker/backend/nginx/backend.conf /etc/nginx/conf.d/default.conf
-# 📂 Solo archivos públicos
-COPY --from=deps /app/public /var/www/html/public
+
+# COPY --from=deps /app/public /var/www/html/public
+COPY --from=prod /var/www/html/public /var/www/html/public
 
 EXPOSE 80
 
