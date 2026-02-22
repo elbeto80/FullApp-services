@@ -38,10 +38,12 @@ services:
       dockerfile: docker/backend/Dockerfile
       target: nginx-backend
     restart: unless-stopped
+    volumes:
+      - backend_storage:/var/www/html/storage
     networks:
       - app_net
     healthcheck:
-      test: ["CMD", "nginx", "-t"]
+      test: ["CMD", "wget", "-qO-", "http://localhost"]
       interval: 10s
       timeout: 5s
       retries: 3
