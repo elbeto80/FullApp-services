@@ -26,7 +26,7 @@ CMD ["sh", "-c", "npm install && npm run dev"]
 # ── Stage 3: Production (Nginx sirve los archivos estáticos) ──
 FROM nginx:1.28-alpine3.23 AS prod
 
-COPY nginx/frontend.conf /etc/nginx/conf.d/default.conf
+COPY docker/frontend/nginx/frontend.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/dist /usr/share/nginx/html
 
 EXPOSE 80
