@@ -106,7 +106,7 @@ RUN php artisan config:clear \
   && php artisan view:clear
 
 # 🚀 Entrypoint que cachea config en runtime (cuando las env vars están disponibles)
-COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY docker/backend/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 EXPOSE 9000
