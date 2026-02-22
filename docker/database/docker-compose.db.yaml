@@ -18,6 +18,10 @@ services:
     networks:
       - app_net
 
+volumes:
+  mysql_data:
+  # postgres_data:
+
 networks:
   app_net:
     external: true
