@@ -60,7 +60,7 @@ RUN composer dump-autoload --optimize
 
 
 # ── Stage 2: Production PHP-FPM ──
-FROM php:8.4-fpm-alpine3.23 AS backend
+FROM php:8.4-fpm-alpine3.23 AS prod
 
 WORKDIR /var/www/html
 

@@ -1,0 +1,54 @@
+services:
+  backend:
+    build:
+      context: ../..
+      dockerfile: docker/backend/Dockerfile
+      target: prod
+    volumes:
+      # 📦 Persistencia solo de storage (logs, cache, uploads)
+      - backend_storage:/var/www/html/storage
+    environment:
+      APP_NAME: ${APP_NAME}
+      APP_ENV: ${APP_ENV}
+      APP_DEBUG: ${APP_DEBUG}
+      APP_KEY: ${APP_KEY} # 🔐 Nunca hardcodeado
+      APP_URL: ${APP_URL}
+
+      DB_CONNECTION: ${DB_CONNECTION}
+      DB_HOST: ${DB_HOST} # 🔗 Nombre del servicio Docker
+      DB_PORT: ${DB_PORT}
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+
+      LOG_CHANNEL: stderr # 📊 Logs compatibles con Docker/Dokploy
+    restart: unless-stopped
+    healthcheck:
+      # 🩺 Healthcheck simple del backend
+      test: ["CMD", "php", "-v"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - app_net
+
+  nginx-backend:
+    build:
+      context: ../..
+      dockerfile: docker/backend/Dockerfile
+      target: nginx-backend
+    restart: unless-stopped
+    networks:
+      - app_net
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+networks:
+  app_net:
+    external: true
+
+volumes:
+  backend_storage:
